@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Katherine Johnson | Consciência Negra & Ciência Espacial</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts: Inter & Space Grotesk -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+            display: ['Space Grotesk', 'sans-serif'],
+          },
+          colors: {
+            spaceBg: '#030712',
+            cardBg: 'rgba(15, 23, 42, 0.8)',
+            nasaGold: '#fbbf24',
+            nasaCyan: '#38bdf8',
+            nasaPink: '#f472b6',
+            nasaPurple: '#c084fc',
+            nasaGreen: '#34d399'
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            'float': 'float 6s ease-in-out infinite',
+          },
+          keyframes: {
+            float: {
+              '0%, 100%': { transform: 'translateY(0px)' },
+              '50%': { transform: 'translateY(-10px)' },
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      background-color: #030712;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(30, 58, 138, 0.35) 0%, transparent 60%),
+        radial-gradient(circle at 85% 70%, rgba(147, 51, 234, 0.18) 0%, transparent 50%),
+        radial-gradient(circle at 15% 85%, rgba(14, 165, 233, 0.15) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .glass-card {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .glass-card-hover {
+      transition: all 0.3s ease;
+    }
+    .glass-card-hover:hover {
+      border-color: rgba(251, 191, 36, 0.3);
+      box-shadow: 0 10px 30px -10px rgba(251, 191, 36, 0.15);
+      transform: translateY(-2px);
+    }
+
+    /* 3D Flip Card Styles */
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+    .flip-card-inner {
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-card-inner, .flip-card.flipped .flip-card-inner {
+      transform: rotateY(180deg);
+    }
+    .flip-card-front, .flip-card-back {
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .flip-card-back {
+      transform: rotateY(180deg);
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #030712;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #fbbf24;
+    }
+
+    input[type=range] {
+      accent-color: #fbbf24;
+    }
+  </style>
+</head>
+<body class="text-slate-100 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-amber-400 selection:text-black">
+
+  <header class="sticky top-0 z-50 w-full glass-card border-b border-slate-800/80 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-3">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('bio')">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 text-xl font-bold shadow-lg shadow-amber-500/20">
+          🚀
+        </div>
+        <div>
+          <span class="font-display font-bold text-lg text-amber-400 tracking-wide block leading-none">Katherine Johnson</span>
+          <span class="text-xs text-slate-400">Pioneira da Ciência Espacial • NASA</span>
+        </div>
+      </div>
+
+      <!-- Tab Buttons -->
+      <nav class="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2 bg-slate-950/80 p-1.5 rounded-xl border border-slate-800/80 text-xs sm:text-sm">
+        <button onclick="switchTab('bio')" id="tab-bio" class="tab-btn active font-medium px-3 py-1.5 rounded-lg transition-all text-amber-400 bg-slate-800">
+          📖 Biografia
+        </button>
+        <button onclick="switchTab('movie')" id="tab-movie" class="tab-btn font-medium px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          🎬 O Filme
+        </button>
+        <button onclick="switchTab('timeline')" id="tab-timeline" class="tab-btn font-medium px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          📍 Linha do Tempo
+        </button>
+        <button onclick="switchTab('stem')" id="tab-stem" class="tab-btn font-medium px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          ✊ Legado & STEM
+        </button>
+        <button onclick="switchTab('tools')" id="tab-tools" class="tab-btn font-medium px-3 py-1.5 rounded-lg transition-all text-slate-400 hover:text-white">
+          🧮 Interações
+        </button>
+        <button onclick="switchTab('game')" id="tab-game" class="tab-btn font-medium px-3.5 py-1.5 rounded-lg transition-all bg-amber-400 text-slate-950 font-semibold hover:bg-amber-300 shadow-md">
+          🎮 Mini-Jogo
+        </button>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-8 w-full flex-1">
+
+    <!-- ================= TAB 1: BIOGRAFIA ================= -->
+    <section id="sec-bio" class="tab-content space-y-10 animate-in fade-in duration-300">
+      
+      <!-- Hero Banner -->
+      <div class="text-center space-y-4 pt-2">
+        <div class="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-xs font-semibold uppercase tracking-wider">
+          <span>👑 Consciência Negra & Ciência Espacial</span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-display font-bold text-white tracking-tight leading-tight">
+          A Mente Genial que Calculou os <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500">Caminhos até as Estrelas</span>
+        </h1>
+        <p class="text-slate-400 max-w-3xl mx-auto text-base md:text-lg leading-relaxed">
+          Mesmo sob as severas leis de segregação racial e barreiras de gênero da era Jim Crow nos EUA, Katherine Johnson tornou-se a referência máxima em física e cálculo orbital na NASA.
+        </p>
+      </div>
+
+      <!-- Main Profile Card -->
+      <div class="glass-card rounded-3xl p-6 md:p-10 border-l-4 border-amber-400 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-20 -bottom-20 w-80 h-80 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+          
+          <!-- NASA Official Photo -->
+          <div class="md:col-span-5 flex flex-col items-center">
+            <div class="relative group w-full max-w-[280px]">
+              <div class="absolute -inset-1 bg-gradient-to-r from-amber-400 via-amber-300 to-amber-500 rounded-2xl blur opacity-30 group-hover:opacity-75 transition duration-500"></div>
+              <img 
+                src="https://upload.wikimedia.org/wikipedia/commons/6/6d/Katherine_Johnson_1983.jpg" 
+                alt="Katherine Johnson na NASA" 
+                class="relative rounded-2xl w-full h-auto object-cover border-2 border-amber-400/40 shadow-2xl"
+                onerror="this.onerror=null; this.src='https://placehold.co/400x500/1e293b/fbbf24?text=Katherine+Johnson+NASA';"
+              />
+            </div>
+            <p class="text-xs text-slate-400 mt-3 text-center italic">
+              Fotografia oficial de Katherine Johnson em sua mesa na NASA (1983).
+            </p>
+          </div>
+
+          <!-- Bio Detailed Content -->
+          <div class="md:col-span-7 space-y-5">
+            <h2 class="text-2xl md:text-3xl font-display font-bold text-white flex items-center gap-3">
+              <span>Infância Prodígio & Trajetória</span>
+            </h2>
+
+            <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+              <strong class="text-amber-400">Katherine Coleman Goble Johnson</strong> nasceu em 1918 em White Sulphur Springs, Virgínia Ocidental. Desde a infância, demonstrava um fascínio absurdo por números. Como a cidade onde vivia não oferecia ensino público para jovens negros após o 8º ano, seu pai mudou a família inteira de cidade para que os filhos pudessem estudar.
+            </p>
+
+            <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+              Aos <strong class="text-white">10 anos já estava no ensino médio</strong> e, aos <strong class="text-white">18 anos, formou-se com honras máximas</strong> em Matemática e Francês na West Virginia State College.
+            </p>
+
+            <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+              Em 1953, ingressou na NACA (antecessora da NASA) no setor <em>West Area Computing</em>, uma divisão composta por mulheres negras conhecidas como <strong>"computadores humanas"</strong>. Katherine destacou-se rapidamente devido ao seu domínio da geometria analítica e da física astronômica.
+            </p>
+
+            <div class="grid grid-cols-2 gap-3 pt-2">
+              <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                <span class="block text-amber-400 font-bold text-xl md:text-2xl font-display">18 Anos</span>
+                <span class="text-xs text-slate-400">Idade ao se formar na faculdade</span>
+              </div>
+              <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-800">
+                <span class="block text-cyan-400 font-bold text-xl md:text-2xl font-display">33 Anos</span>
+                <span class="text-xs text-slate-400">De carreira destacada na NASA</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Quote Showcase -->
+      <div class="p-8 rounded-2xl glass-card border border-amber-400/30 text-center relative overflow-hidden bg-gradient-to-r from-slate-900 via-amber-950/20 to-slate-900">
+        <span class="text-5xl text-amber-400/20 font-serif absolute top-2 left-6">“</span>
+        <blockquote class="text-lg md:text-xl text-amber-100 font-display italic max-w-3xl mx-auto relative z-10 leading-relaxed">
+          "Eu contava tudo. Contava os passos até a estrada, os passos até a igreja, o número de pratos e talheres que lavava... tudo o que podia ser contado, eu contava."
+        </blockquote>
+        <span class="block text-sm text-amber-400 font-semibold mt-4">— Katherine Johnson</span>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 2: O FILME ================= -->
+    <section id="sec-movie" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      
+      <!-- Movie Header -->
+      <div class="glass-card rounded-3xl p-6 md:p-10 border-l-4 border-pink-500 bg-gradient-to-br from-slate-900 via-slate-900 to-purple-950/40">
+        <div class="space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 bg-pink-500/20 border border-pink-500/40 rounded-full text-pink-300 text-xs font-semibold uppercase">
+            🎬 Cinema & Representatividade
+          </div>
+          <h2 class="text-3xl font-display font-bold text-white">
+            "Estrelas Além do Tempo" <span class="text-pink-400 font-normal">(Hidden Figures, 2016)</span>
+          </h2>
+          <p class="text-slate-300 text-base leading-relaxed">
+            Baseado na biografia escrita por Margot Lee Shetterly, o filme revelou ao planeta a história há muito silenciada de três cientistas negras extraordinárias que foram os pilares intelectuais do programa espacial americano durante a Guerra Fria.
+          </p>
+        </div>
+      </div>
+
+      <!-- The Trio / Characters -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+        <!-- Katherine Johnson -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border-t-4 border-amber-400 space-y-3">
+          <div class="w-12 h-12 bg-amber-400/10 rounded-xl flex items-center justify-center text-2xl">📐</div>
+          <h3 class="text-xl font-bold text-white font-display">Katherine Johnson</h3>
+          <p class="text-xs text-amber-400 font-medium uppercase tracking-wide">Interpretada por Taraji P. Henson</p>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Especialista em trajetória orbital e geometria. O filme dramatiza sua luta para ser admitida nas reuniões de alto nível e sua determinação em calcular a reentrada da missão de John Glenn.
+          </p>
+        </div>
+
+        <!-- Dorothy Vaughan -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border-t-4 border-purple-400 space-y-3">
+          <div class="w-12 h-12 bg-purple-400/10 rounded-xl flex items-center justify-center text-2xl">💻</div>
+          <h3 class="text-xl font-bold text-white font-display">Dorothy Vaughan</h3>
+          <p class="text-xs text-purple-400 font-medium uppercase tracking-wide">Interpretada por Octavia Spencer</p>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Primeira supervisora negra da NACA. Percebendo a chegada dos novos computadores mainframe IBM 7090, aprendeu a linguagem FORTRAN sozinha e ensinou sua equipe para que não perdessem os empregos.
+          </p>
+        </div>
+
+        <!-- Mary Jackson -->
+        <div class="glass-card glass-card-hover rounded-2xl p-6 border-t-4 border-cyan-400 space-y-3">
+          <div class="w-12 h-12 bg-cyan-400/10 rounded-xl flex items-center justify-center text-2xl">🛠️</div>
+          <h3 class="text-xl font-bold text-white font-display">Mary Jackson</h3>
+          <p class="text-xs text-cyan-400 font-medium uppercase tracking-wide">Interpretada por Janelle Monáe</p>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Engenheira aeronáutica. Teve que recorrer à justiça para obter permissão especial de frequentar aulas noturnas de engenharia em uma escola segregada para brancos, tornando-se a 1ª engenheira negra da NASA.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Conflicts & Real Impact -->
+      <div class="glass-card rounded-2xl p-6 md:p-8 space-y-6 border border-slate-800">
+        <h3 class="text-xl font-display font-bold text-white flex items-center gap-2">
+          <span>⚠️ Conflitos Reais Retratados no Filme</span>
+        </h3>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-pink-400 font-bold text-sm">O Banheiro Segregado</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Katherine tinha que caminhar centenas de metros debaixo de chuva até o prédio segregado para usar o banheiro "para mulheres de cor", perdendo tempo precioso de trabalho.
+            </p>
+          </div>
+
+          <div class="p-4 bg-slate-900/80 rounded-xl border border-slate-800 space-y-2">
+            <h4 class="text-amber-400 font-bold text-sm">A Checagem do IBM 7090</h4>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Quando o computador eletrônico IBM apresentou divergências de cálculo, John Glenn recusou-se a subir na nave antes que Katherine conferisse manualmente cada equação.
+            </p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 3: LINHA DO TEMPO ================= -->
+    <section id="sec-timeline" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-display font-bold text-white">Linha do Tempo Interativa</h2>
+        <p class="text-slate-400 text-sm">Clique nos anos para ver detalhes marcantes da trajetória de Katherine Johnson</p>
+      </div>
+
+      <div class="glass-card rounded-3xl p-6 md:p-8">
+        
+        <!-- Interactive Horizontal/Vertical Timeline -->
+        <div class="relative border-l-2 border-amber-400/40 ml-4 md:ml-8 space-y-8 pl-6 md:pl-8">
+          
+          <!-- Item 1918 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-1918')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-amber-400 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-amber-400 tracking-wider uppercase bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30">1918</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-amber-300 transition-colors">Nascimento em Virginia Ocidental</h3>
+            <p class="text-slate-300 text-sm mt-1">Nascida em 26 de Agosto. Menina prodígio que demonstrava obsessão por contagem e geometria.</p>
+            <div id="tl-1918" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              Como a sua cidade não tinha escolas secundárias públicas para afro-americanos, a família alugou uma casa a 200 km de distância durante o período escolar para garantir seus estudos.
+            </div>
+          </div>
+
+          <!-- Item 1937 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-1937')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-cyan-400 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-cyan-400 tracking-wider uppercase bg-cyan-400/10 px-2 py-0.5 rounded border border-cyan-400/30">1937</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-cyan-300 transition-colors">Graduação com Honras aos 18 Anos</h3>
+            <p class="text-slate-300 text-sm mt-1">Formou-se em Matemática e Francês com a nota máxima na West Virginia State University.</p>
+            <div id="tl-1937" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              O renomado matemático Dr. William Schieffelin Claytor criou disciplinas avançadas de geometria analítica exclusivamente para Katherine no currículo da faculdade.
+            </div>
+          </div>
+
+          <!-- Item 1953 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-1953')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-purple-400 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-purple-400 tracking-wider uppercase bg-purple-400/10 px-2 py-0.5 rounded border border-purple-400/30">1953</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-purple-300 transition-colors">Ingresso na NACA (Futura NASA)</h3>
+            <p class="text-slate-300 text-sm mt-1">Contratada para o Langley Research Center na divisão West Area Computers.</p>
+            <div id="tl-1953" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              Em duas semanas, Katherine foi temporariamente transferida para a divisão de Pesquisa de Voo de Engenharia. Sua contribuição foi tão impressionante que nunca mais a devolveram ao setor segregado!
+            </div>
+          </div>
+
+          <!-- Item 1962 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-1962')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-amber-400 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-amber-400 tracking-wider uppercase bg-amber-400/10 px-2 py-0.5 rounded border border-amber-400/30">1962</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-amber-300 transition-colors">Voo Orbital de John Glenn (Friendship 7)</h3>
+            <p class="text-slate-300 text-sm mt-1">Confirmação manual das equações de órbita calculadas pelos computadores eletrônicos da IBM.</p>
+            <div id="tl-1962" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              A missão transformou a Corrida Espacial dos EUA. O trabalho manual de Katherine levou 1 dia e meio até que ela afirmasse: "Está pronto, pode lançar!"
+            </div>
+          </div>
+
+          <!-- Item 1969 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-1969')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-emerald-400 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-emerald-400 tracking-wider uppercase bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/30">1969</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-emerald-300 transition-colors">Apollo 11: O Homem na Lua</h3>
+            <p class="text-slate-300 text-sm mt-1">Cálculo das trajetórias de sincronização do Módulo Lunar com o Módulo de Comando.</p>
+            <div id="tl-1969" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              Sem os cálculos exatos de Katherine, o Módulo Lunar não conseguiria se acoplar de volta à nave mãe para retornar os astronautas em segurança à Terra.
+            </div>
+          </div>
+
+          <!-- Item 2015 & 2020 -->
+          <div class="timeline-item cursor-pointer group" onclick="toggleTimelineDetail('tl-2015')">
+            <div class="absolute -left-[31px] md:-left-[39px] top-1 w-5 h-5 rounded-full bg-pink-500 border-4 border-slate-950 group-hover:scale-125 transition-transform"></div>
+            <span class="text-xs font-bold text-pink-400 tracking-wider uppercase bg-pink-400/10 px-2 py-0.5 rounded border border-pink-400/30">2015 - 2020</span>
+            <h3 class="text-lg font-bold text-white mt-1 group-hover:text-pink-300 transition-colors">Medalha da Liberdade & Encaminhamento do Legado</h3>
+            <p class="text-slate-300 text-sm mt-1">Condecorada por Barack Obama. Faleceu aos 101 anos em 2020, sendo homenageada mundialmente.</p>
+            <div id="tl-2015" class="hidden mt-3 p-3 bg-slate-900/90 rounded-xl border border-slate-800 text-xs text-slate-300 leading-relaxed">
+              A NASA renomeou o complexo de verificação de software de voo para "Katherine Johnson Computational Research Facility" em sua homenagem.
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 4: STEM & CONSCIÊNCIA NEGRA ================= -->
+    <section id="sec-stem" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      
+      <div class="text-center space-y-2">
+        <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-400/10 border border-amber-400/30 rounded-full text-amber-400 text-xs font-semibold uppercase">
+          ✊ Igualdade & Futuro
+        </div>
+        <h2 class="text-3xl font-display font-bold text-white">Legado na Ciência & Consciência Negra</h2>
+        <p class="text-slate-400 text-sm max-w-2xl mx-auto">
+          A presença e conquista de Katherine Johnson abriu caminhos para que futuras gerações de cientistas negros ocupem posições de liderança nas áreas STEM.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-amber-400 space-y-3">
+          <h3 class="text-lg font-bold text-white font-display">O Muro da Visibilidade</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Durante décadas, os nomes de mulheres negras foram omitidos dos livros didáticos e registros oficiais de grandes conquistas científicas. O Dia da Consciência Negra serve para resgatar e celebrar essas mentes fundamentais.
+          </p>
+        </div>
+
+        <div class="glass-card rounded-2xl p-6 border-l-4 border-cyan-400 space-y-3">
+          <h3 class="text-lg font-bold text-white font-display">Mulheres Negras no STEM</h3>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Mesmo com os avanços, a sub-representação de mulheres negras nas áreas de Engenharia e Ciência da Computação continua sendo um desafio global que exige incentivo desde a educação básica.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Flip Cards with Curiosities / Quiz -->
+      <div class="space-y-4">
+        <h3 class="text-xl font-display font-bold text-white text-center">📇 Cartões de Curiosidades (Passe o mouse ou clique para virar)</h3>
+        
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          
+          <!-- Flip Card 1 -->
+          <div class="flip-card perspective-1000 h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-xl">
+              <div class="flip-card-front absolute inset-0 glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-amber-400/30">
+                <span class="text-3xl mb-2">🚀</span>
+                <h4 class="font-bold text-amber-400 font-display">Apollo 13</h4>
+                <p class="text-xs text-slate-400 mt-2">Como ela salvou a missão em crise?</p>
+              </div>
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-amber-500 to-amber-700 text-slate-950 rounded-2xl p-5 flex flex-col items-center justify-center text-center font-medium text-xs leading-relaxed">
+                Quando os tanques de oxigênio da Apollo 13 explodiram, Katherine trabalhou nos procedimentos e mapas de cartas astronômicas de emergência que permitiram o retorno seguro dos astronautas!
+              </div>
+            </div>
+          </div>
+
+          <!-- Flip Card 2 -->
+          <div class="flip-card perspective-1000 h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-xl">
+              <div class="flip-card-front absolute inset-0 glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-purple-400/30">
+                <span class="text-3xl mb-2">📚</span>
+                <h4 class="font-bold text-purple-400 font-display">Primeira Autora</h4>
+                <p class="text-xs text-slate-400 mt-2">Qual foi seu marco acadêmico na NASA?</p>
+              </div>
+              <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-purple-600 to-indigo-900 text-white rounded-2xl p-5 flex flex-col items-center justify-center text-center font-medium text-xs leading-relaxed">
+                Ela foi a primeira mulher na Divisão de Pesquisa de Voo a assinar seu próprio nome como coautora de um relatório de pesquisa oficial da NASA (1960).
+              </div>
+            </div>
+          </div>
+
+          <!-- Flip Card 3 -->
+          <div class="flip-card perspective-1000 h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
+            <div class="flip-card-inner relative w-full h-full rounded-2xl shadow-xl">
+              <div class="flip-card-inner relative w-full h-full rounded-2xl">
+                <div class="flip-card-front absolute inset-0 glass-card rounded-2xl p-6 flex flex-col items-center justify-center text-center border border-cyan-400/30">
+                  <span class="text-3xl mb-2">⭐</span>
+                  <h4 class="font-bold text-cyan-400 font-display">Satélite Mars Lander</h4>
+                  <p class="text-xs text-slate-400 mt-2">Até onde foram seus cálculos?</p>
+                </div>
+                <div class="flip-card-back absolute inset-0 bg-gradient-to-br from-cyan-600 to-blue-900 text-white rounded-2xl p-5 flex flex-col items-center justify-center text-center font-medium text-xs leading-relaxed">
+                  Além da Lua, Katherine também trabalhou nos cálculos iniciais para o programa do satélite de navegação para as missões a Marte!
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 5: FERRAMENTAS & INTERAÇÃO ================= -->
+    <section id="sec-tools" class="tab-content hidden space-y-8 animate-in fade-in duration-300">
+      
+      <div class="text-center space-y-2">
+        <h2 class="text-3xl font-display font-bold text-white">Calculadora Gravitacional Orbital</h2>
+        <p class="text-slate-400 text-sm max-w-xl mx-auto">
+          Simule a Força de Atração Gravitacional ($F = G \cdot \frac{m_1 \cdot m_2}{r^2}$) usada por Katherine para manter satélites e foguetes em órbita sem despencarem na Terra.
+        </p>
+      </div>
+
+      <div class="glass-card rounded-3xl p-6 md:p-8 max-w-2xl mx-auto border border-amber-400/30 space-y-6">
+        
+        <div class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Massa da Nave / Satélite ($m_1$ em kg)</label>
+            <input type="number" id="calcMass" value="15000" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-amber-400 font-mono focus:outline-none focus:border-amber-400 text-sm" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 uppercase mb-1">Altitude da Órbita ($r$ em km acima da Terra)</label>
+            <input type="number" id="calcDist" value="400" class="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-cyan-400 font-mono focus:outline-none focus:border-amber-400 text-sm" />
+          </div>
+
+          <button onclick="calculateGravityForce()" class="w-full bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold py-3 rounded-xl transition-all shadow-lg text-sm">
+            ⚡ Calcular Força Gravitacional de Órbita
+          </button>
+        </div>
+
+        <div id="calcResult" class="p-4 bg-slate-950/80 rounded-xl border border-slate-800 text-center space-y-1">
+          <span class="text-xs text-slate-400 block">Força Gravitacional Resultante</span>
+          <span id="forceValue" class="text-2xl font-bold font-mono text-emerald-400">133,020.45 N</span>
+          <p class="text-[11px] text-slate-500 mt-1">Baseado na Massa da Terra ($5.97 \times 10^{24}$ kg) e Raio da Terra ($6371$ km).</p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ================= TAB 6: MINI-JOGO TOTALMENTE APRIMORADO ================= -->
+    <section id="sec-game" class="tab-content hidden space-y-6 animate-in fade-in duration-300">
+      
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">Simulação de Lançamento da NASA</span>
+          <h2 class="text-2xl md:text-3xl font-display font-bold text-white">🎮 Cálculo da Trajetória Orbital</h2>
+        </div>
+
+        <!-- Level selector & Score -->
+        <div class="flex flex-wrap items-center gap-3">
+          
+          <!-- Difficulty selector -->
+          <div class="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+            <button onclick="setDifficulty('easy')" id="btn-easy" class="px-3 py-1.5 rounded-lg text-emerald-400 bg-slate-800">Fácil</button>
+            <button onclick="setDifficulty('medium')" id="btn-medium" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-amber-400">Médio</button>
+            <button onclick="setDifficulty('hard')" id="btn-hard" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-rose-400">Difícil</button>
+          </div>
+
+          <div class="flex items-center gap-4 bg-slate-900/90 px-4 py-1.5 rounded-xl border border-slate-800 text-xs">
+            <div>
+              <span class="text-slate-400 block text-[10px]">Tentativas</span>
+              <span id="attemptsVal" class="font-bold text-white text-sm">0</span>
+            </div>
+            <div class="h-6 w-px bg-slate-800"></div>
+            <div>
+              <span class="text-slate-400 block text-[10px]">Pontos</span>
+              <span id="scoreVal" class="font-bold text-amber-400 text-sm">0</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Difficulty information badge -->
+      <div id="diffInfo" class="p-3 bg-slate-900/80 rounded-xl border border-slate-800 text-xs text-slate-300 flex items-center justify-between">
+        <span>🟢 <strong>Modo Fácil:</strong> Órbita grande e sem obstáculos. A linha amarela guia a previsão de voo!</span>
+        <span id="windBadge" class="hidden text-amber-400 font-mono">💨 Vento Solar: 0.0</span>
+      </div>
+
+      <!-- Canvas Area -->
+      <div class="relative w-full overflow-hidden rounded-2xl bg-slate-950 border border-slate-800 shadow-2xl">
+        <canvas id="gameCanvas" class="w-full h-[320px] sm:h-[380px] block cursor-crosshair"></canvas>
+      </div>
+
+      <!-- Game Controls -->
+      <div class="glass-card p-5 md:p-6 rounded-2xl border border-slate-800 space-y-5">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Angle slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs font-semibold">
+              <label for="gAngle" class="text-slate-300">Ângulo de Lançamento</label>
+              <span class="text-amber-400 font-mono text-sm"><span id="gAngleText">45</span>°</span>
+            </div>
+            <input type="range" id="gAngle" min="10" max="85" value="45" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+
+          <!-- Speed slider -->
+          <div class="space-y-2">
+            <div class="flex justify-between text-xs font-semibold">
+              <label for="gPower" class="text-slate-300">Velocidade de Impulso</label>
+              <span class="text-cyan-400 font-mono text-sm"><span id="gPowerText">9.5</span> km/s</span>
+            </div>
+            <input type="range" id="gPower" min="6" max="13" step="0.1" value="9.5" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer">
+          </div>
+        </div>
+
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+          <button id="gLaunchBtn" class="w-full sm:w-auto bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold px-8 py-3 rounded-xl shadow-lg transition-all active:scale-95 text-sm flex items-center justify-center gap-2">
+            🚀 Lançar Foguete
+          </button>
+          
+          <div id="gStatus" class="text-xs sm:text-sm font-semibold text-center sm:text-right text-slate-400 min-h-[20px]">
+            Aguardando ordem de lançamento...
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="w-full border-t border-slate-800/80 py-6 text-center text-slate-500 text-xs glass-card mt-12">
+    <p>Projeto do Dia da Consciência Negra • Homenagem ao Legado Permanente de Katherine Johnson</p>
+  </footer>
+
+  <script>
+    /* ==========================================================================
+       1. TAB NAVIGATION LOGIC
+       ========================================================================== */
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-slate-800', 'text-amber-400');
+        btn.classList.add('text-slate-400');
+      });
+
+      const activeContent = document.getElementById(`sec-${tabId}`);
+      if (activeContent) activeContent.classList.remove('hidden');
+
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn && tabId !== 'game') {
+        activeBtn.classList.add('active', 'bg-slate-800', 'text-amber-400');
+        activeBtn.classList.remove('text-slate-400');
+      }
+
+      if (tabId === 'game') {
+        setTimeout(resizeCanvas, 50);
+      }
+    }
+
+    function toggleTimelineDetail(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.toggle('hidden');
+    }
+
+    /* ==========================================================================
+       2. GRAVITATIONAL CALCULATOR
+       ========================================================================== */
+    function calculateGravityForce() {
+      const m1 = parseFloat(document.getElementById('calcMass').value) || 15000;
+      const altitudeKm = parseFloat(document.getElementById('calcDist').value) || 400;
+      
+      const G = 6.67430e-11;
+      const M_EARTH = 5.972e24;
+      const R_EARTH = 6371000; // meters
+
+      const totalRadiusMeters = R_EARTH + (altitudeKm * 1000);
+      const force = (G * M_EARTH * m1) / Math.pow(totalRadiusMeters, 2);
+
+      document.getElementById('forceValue').textContent = force.toLocaleString('pt-BR', {
+        maximumFractionDigits: 2
+      }) + " N";
+    }
+
+    /* ==========================================================================
+       3. UPGRADED MINI-GAME PHYSICS & CANVAS SYSTEM
+       ========================================================================== */
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const gAngle = document.getElementById("gAngle");
+    const gAngleText = document.getElementById("gAngleText");
+    const gPower = document.getElementById("gPower");
+    const gPowerText = document.getElementById("gPowerText");
+    const gLaunchBtn = document.getElementById("gLaunchBtn");
+    const gStatus = document.getElementById("gStatus");
+
+    const attemptsVal = document.getElementById("attemptsVal");
+    const scoreVal = document.getElementById("scoreVal");
+    const diffInfo = document.getElementById("diffInfo");
+    const windBadge = document.getElementById("windBadge");
+
+    gAngle.addEventListener("input", () => gAngleText.textContent = gAngle.value);
+    gPower.addEventListener("input", () => gPowerText.textContent = gPower.value);
+
+    // Game Config & Variables
+    let difficulty = 'easy'; // 'easy', 'medium', 'hard'
+    let attempts = 0;
+    let score = 0;
+
+    let rocket = { x: 50, y: 0, vx: 0, vy: 0, active: false };
+    let target = { x: 0, y: 0, width: 50, height: 60, vy: 0 };
+    let obstacles = []; // Asteroide / Lixo Espacial
+    let solarWind = 0;
+
+    let trail = [];
+    let explosionParticles = [];
+
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+      setupLevelParameters();
+      drawGame();
+    }
+    window.addEventListener("resize", resizeCanvas);
+
+    function setDifficulty(mode) {
+      difficulty = mode;
+      ['easy', 'medium', 'hard'].forEach(m => {
+        const btn = document.getElementById(`btn-${m}`);
+        if (m === mode) {
+          btn.className = "px-3 py-1.5 rounded-lg text-amber-400 bg-slate-800 font-bold";
+        } else {
+          btn.className = "px-3 py-1.5 rounded-lg text-slate-400 hover:text-white";
+        }
+      });
+
+      setupLevelParameters();
+      drawGame();
+    }
+
+    function setupLevelParameters() {
+      const groundY = canvas.height - 35;
+      
+      if (difficulty === 'easy') {
+        target = { x: canvas.width - 90, y: canvas.height * 0.25, width: 55, height: 70, vy: 0 };
+        obstacles = [];
+        solarWind = 0;
+        windBadge.classList.add('hidden');
+        diffInfo.innerHTML = '<span>🟢 <strong>Modo Fácil:</strong> Órbita ampla e limpa. A linha amarela prevê seu voo!</span>';
+      } 
+      else if (difficulty === 'medium') {
+        target = { x: canvas.width - 80, y: canvas.height * 0.3, width: 45, height: 55, vy: 0 };
+        obstacles = [
+          { x: canvas.width * 0.45, y: canvas.height * 0.35, radius: 18, vy: 0 },
+          { x: canvas.width * 0.6, y: canvas.height * 0.5, radius: 22, vy: 0 }
+        ];
+        solarWind = 0;
+        windBadge.classList.add('hidden');
+        diffInfo.innerHTML = '<span>🟡 <strong>Modo Médio:</strong> Órbita reduzida e campo estático de asteroides!</span>';
+      } 
+      else if (difficulty === 'hard') {
+        target = { x: canvas.width - 70, y: canvas.height * 0.2, width: 35, height: 45, vy: 1.2 };
+        obstacles = [
+          { x: canvas.width * 0.4, y: canvas.height * 0.25, radius: 16, vy: 1.5 },
+          { x: canvas.width * 0.58, y: canvas.height * 0.55, radius: 20, vy: -1.5 }
+        ];
+        solarWind = (Math.random() - 0.5) * 0.08;
+        windBadge.classList.remove('hidden');
+        windBadge.textContent = `💨 Vento Solar: ${solarWind > 0 ? '+' : ''}${solarWind.toFixed(3)}`;
+        diffInfo.innerHTML = '<span>🔴 <strong>Modo Difícil:</strong> Órbita móvel, asteroides em movimento e vento solar!</span>';
+      }
+    }
+
+    function drawGame() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Ground
+      const groundY = canvas.height - 35;
+      ctx.fillStyle = "#1e3a8a";
+      ctx.fillRect(0, groundY, canvas.width, 35);
+
+      // Target Orbital Window
+      ctx.fillStyle = "rgba(34, 197, 94, 0.2)";
+      ctx.fillRect(target.x, target.y, target.width, target.height);
+      ctx.strokeStyle = "#22c55e";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(target.x, target.y, target.width, target.height);
+
+      ctx.fillStyle = "#4ade80";
+      ctx.font = "bold 11px sans-serif";
+      ctx.fillText("Órbita Luna", target.x - 2, target.y - 8);
+
+      // Obstacles
+      obstacles.forEach(obs => {
+        ctx.fillStyle = "#64748b";
+        ctx.beginPath();
+        ctx.arc(obs.x, obs.y, obs.radius, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = "#94a3b8";
+        ctx.stroke();
+      });
+
+      // Predicted Trajectory Line (Guidance computer)
+      if (!rocket.active) {
+        ctx.beginPath();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = "rgba(251, 191, 36, 0.4)";
+        ctx.lineWidth = 1.5;
+
+        let simX = 50;
+        let simY = groundY - 5;
+        const angle = parseFloat(gAngle.value);
+        const power = parseFloat(gPower.value);
+        const rad = (angle * Math.PI) / 180;
+        let simVx = Math.cos(rad) * power;
+        let simVy = -Math.sin(rad) * power;
+
+        ctx.moveTo(simX, simY);
+
+        for (let i = 0; i < 40; i++) {
+          simX += simVx + solarWind;
+          simY += simVy;
+          simVy += 0.12; // Gravity
+          ctx.lineTo(simX, simY);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Rocket Fire Trail
+      trail.forEach((p, idx) => {
+        const ratio = idx / trail.length;
+        ctx.fillStyle = `rgba(251, 146, 60, ${ratio})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, (1 - ratio) * 4 + 1, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      // Explosion particles
+      explosionParticles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.02;
+      });
+      explosionParticles = explosionParticles.filter(p => p.alpha > 0);
+
+      // Rocket
+      if (!rocket.active) {
+        rocket.x = 50;
+        rocket.y = groundY - 5;
+      }
+
+      ctx.fillStyle = "#ef4444";
+      ctx.beginPath();
+      ctx.arc(rocket.x, rocket.y, 6, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function createExplosion(x, y, color) {
+      for (let i = 0; i < 30; i++) {
+        explosionParticles.push({
+          x: x, y: y,
+          vx: (Math.random() - 0.5) * 7,
+          vy: (Math.random() - 0.5) * 7,
+          radius: Math.random() * 3 + 1.5,
+          color: color || '#f87171',
+          alpha: 1
+        });
+      }
+    }
+
+    function updateGameLogic() {
+      if (!rocket.active) return;
+
+      trail.push({ x: rocket.x, y: rocket.y });
+      if (trail.length > 25) trail.shift();
+
+      rocket.x += rocket.vx + solarWind;
+      rocket.y += rocket.vy;
+      rocket.vy += 0.12; // Gravity acceleration
+
+      // Update Moving Obstacles & Target (Hard mode)
+      if (difficulty === 'hard') {
+        target.y += target.vy;
+        if (target.y < 30 || target.y > canvas.height - 100) target.vy *= -1;
+
+        obstacles.forEach(obs => {
+          obs.y += obs.vy;
+          if (obs.y < 40 || obs.y > canvas.height - 60) obs.vy *= -1;
+        });
+      }
+
+      // Check Obstacle Collisions
+      obstacles.forEach(obs => {
+        const dist = Math.hypot(rocket.x - obs.x, rocket.y - obs.y);
+        if (dist < obs.radius + 6) {
+          rocket.active = false;
+          createExplosion(rocket.x, rocket.y, '#f87171');
+          gStatus.className = "text-xs sm:text-sm font-semibold text-center sm:text-right text-rose-400";
+          gStatus.textContent = "💥 Colisão com Lixo Espacial / Asteroide! Ajuste a rota!";
+        }
+      });
+
+      // Target Success Collision
+      if (
+        rocket.x >= target.x &&
+        rocket.x <= target.x + target.width &&
+        rocket.y >= target.y &&
+        rocket.y <= target.y + target.height
+      ) {
+        rocket.active = false;
+        score += (difficulty === 'hard' ? 300 : difficulty === 'medium' ? 200 : 100);
+        scoreVal.textContent = score;
+        createExplosion(rocket.x, rocket.y, '#34d399');
+        gStatus.className = "text-xs sm:text-sm font-semibold text-center sm:text-right text-emerald-400";
+        gStatus.textContent = "✔ Órbita alcançada com sucesso! Excelentes cálculos!";
+      }
+
+      // Ground or out of bounds collision
+      const groundY = canvas.height - 35;
+      if (rocket.y >= groundY || rocket.x > canvas.width || rocket.x < 0) {
+        rocket.active = false;
+        gStatus.className = "text-xs sm:text-sm font-semibold text-center sm:text-right text-amber-400";
+        gStatus.textContent = "✘ Trajetória fora dos parâmetros da NASA. Tente novamente!";
+      }
+
+      drawGame();
+
+      if (rocket.active) {
+        requestAnimationFrame(updateGameLogic);
+      }
+    }
+
+    gLaunchBtn.addEventListener("click", () => {
+      if (rocket.active) return;
+
+      attempts++;
+      attemptsVal.textContent = attempts;
+
+      const groundY = canvas.height - 35;
+      const angle = parseFloat(gAngle.value);
+      const power = parseFloat(gPower.value);
+      const rad = (angle * Math.PI) / 180;
+
+      rocket.x = 50;
+      rocket.y = groundY - 5;
+      rocket.vx = Math.cos(rad) * power;
+      rocket.vy = -Math.sin(rad) * power;
+      rocket.active = true;
+
+      trail = [];
+      gStatus.className = "text-xs sm:text-sm font-semibold text-center sm:text-right text-amber-400";
+      gStatus.textContent = "Calculando e executando voo...";
+
+      updateGameLogic();
+    });
+
+    // Initialize Game Canvas state
+    setTimeout(() => {
+      resizeCanvas();
+      calculateGravityForce();
+    }, 100);
+  </script>
+</body>
+</html>
